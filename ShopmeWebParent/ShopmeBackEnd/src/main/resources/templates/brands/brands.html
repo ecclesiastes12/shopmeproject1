@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- <head th:replace="fragments :: page_head('Users - Shopme Admin')"></head> -->
+<head th:replace="fragments :: page_head('Users - Shopme Admin', 'none')"></head>
+<body>
+	<div class="container-fluid">
+	<div th:replace="navigation :: menu">
+	</div>
+		<div>
+			<h2>Manage Brands</h2>
+			<a th:href="@{/brands/new}" class="fas fa-folder-plus fa-2x icon-dark mr-2" ></a>
+			
+			<a th:href="@{/brands/export/csv}" class="fas fa-file-csv fa-2x icon-dark mr-2"></a>
+	
+		</div>
+		
+		<div th:replace= "fragments :: search_form_and_message('/brands/page/1')">
+	
+		</div>
+		
+		<div class="full-details">
+			<table class="table table-bordered table-striped table-hover table-responsive-xl-sm">
+				<thead class="thead-dark">
+					<tr>
+						<th th:class="hideable-column">Brand ID</th>
+						<th>Logo</th>
+						<th th:replace="fragments :: column_link('/brands', 'name', 'Brand Name', 'none')">
+							
+							<!-- <a th:if="${sortField != 'name'}" class="text-white"
+								th:href="@{'/brands/page/' + ${currentPage} + '?sortField=name&sortDir=' + ${sortDir}}">
+									Brand Name
+							</a> 
+							
+							<a th:if="${sortField == 'name'}" class="text-white"
+								th:href="@{'/brands/page/' + ${currentPage} + '?sortField=name&sortDir=' +  ${reverseSortDir}}">
+									Brand Name
+							</a> -->
+							
+							
+							<!-- <a th:if="${sortField != 'name'}" class="text-white"
+								th:href="@{'/brands/?sortField=name&sortDir=' + ${sortDir}}">
+									Brand Name
+							</a> 
+							
+							<a th:if="${sortField == 'name'}" class="text-white"
+								th:href="@{'/brands/sortField=name&sortDir=' +  ${reverseSortDir}}">
+									Brand Name
+							</a> -->
+							
+							<!-- <span th:if="${sortField == 'name'}"
+								th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></span> -->
+						</th>
+						<th>Category Name</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="brand : ${listBrands}">
+						<td th:class="hideable-column">[[${brand.id}]]</td>
+						<td>
+						<span th:if="${brand.logo == null}" class="fas fa-portrait fa-3x icon-silver"></span>
+							<img th:if="${brand.logo != null}"  th:src="@{${brand.logoPath}}" class="img-fluid"
+							style="width: 100px;">
+						</td>
+						<td>[[${brand.name}]]</td>
+						<td>
+							<!-- <span class="badge badge-secondary">[[${brand.categories}]]</span> -->
+							<th:block th:each="cat : ${brand.categories}">
+								<span class="badge badge-secondary">[[${cat.name}]]</span>
+							</th:block>
+						</td>
+						<td>
+							<div th:replace="fragments :: edit('brand', '/brands/edit/' + ${brand.id})"></div>
+							<div th:replace="fragments :: delete('brand', ${brand.id}, '/brands/delete/' + ${brand.id},true)"></div>
+						</td>
+					</tr>
+					
+				</tbody>
+			</table>
+		</div>
+		
+		<div class="less-details">
+			<div th:each="brand : ${listBrands}" class="row m-1">
+				<div class="col-6">
+					<span th:if="${brand.logo == null}" class="fas fa-portrait fa-3x icon-silver"></span>
+						<img th:if="${brand.logo != null}"  th:src="@{${brand.logoPath}}" class="img-fluid"
+						style="width: 100px;">
+			
+				</div>
+				<div class="col-6">
+				<div  class="font-weight-bold">[[${brand.name}]]</div>
+				<div class=" mt-2">
+					<div th:replace="fragments :: edit('brand', '/brands/edit/' + ${brand.id})" ></div>
+					&nbsp;
+					<div th:replace="fragments :: delete('brand', ${brand.id}, '/brands/delete/' + ${brand.id},true)"></div>
+				</div>
+				
+			</div>
+			<div>&nbsp;</div>
+		</div>
+		</div>
+		
+		
+		
+		
+<!-- 		</div>
+			
+			<div th:replace="page_pagination :: pagination('/users','users')"></div> -->
+		
+<!-- 		<div class="modal fade text-center" id="confirmModal"> -->
+<!-- 		<div class="modal-dialog"> -->
+<!-- 			<div class="modal-content"> -->
+<!-- 				<div class="modal-header"> -->
+<!-- 					<h4 class="modal-title" >Delete Confirmation</h4> -->
+<!-- 					<button type="button" class="close" data-dismiss="modal">&times;</button> -->
+<!-- 				</div> -->
+<!-- 				<div class="modal-body"> -->
+<!-- 					<span id="confirmText"></span> -->
+<!-- 				</div> -->
+<!-- 				<div class="modal-footer"> -->
+<!-- 					<a class="btn btn-success" href="" id="yesButton">Yes</a> -->
+<!-- 					<button type="button" class="btn btn-danger" data-dismiss="modal">No</button> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+<!-- 		</div> -->
+<!-- 	</div> -->
+		
+		
+		<div th:replace="modal_fragments :: confirm_modal"></div>
+	<!-- 	
+		display page number if the total number of pages(totalItems) is greater than zero
+		<div class="text-center m-1" th:if="${totalItems > 0}">
+			<span>Showing users # [[${startCount}]] to [[${endCount}]] of [[${totalItems}]] </span>
+		</div>
+		<div class="text-center m-1" th:unless="${totalItems > 0}">
+			<span>No users found</span>
+		</div>
+		 -->
+		 
+		<!-- <div>
+			<nav th:if="${totalPages > 1}"> shows the pagination if the number of pages is more than 1
+			  <ul class="pagination justify-content-center flex-wrap">
+			  disable the first page button if the number is less than or equal to 1
+			    <li th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}">
+			    first page view 
+ 			    	sorting for first page ?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} 
+			    
+			    	<a class="page-link" th:href="@{'/brands/page/1?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">First</a>
+			   		<a th:replace="fragments :: page_link(1,'First')"></a>
+			    </li>
+			    disable the previous page button if the number is less than or equal to 1 
+			    <li th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}"> 
+			     previous page view 
+			     	sorting for previous page '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}
+			     
+			    	<a class="page-link" th:href="@{'/brands/page/' + ${currentPage - 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Previous</a>
+			    
+			    	<a th:replace="fragments :: page_link(${currentPage - 1},'Previous')"></a>
+			    </li>
+			   
+			    active page based on the current page view or number
+			    <li th:class="${currentPage != i ? 'page-item' : 'page-item active'}" 
+			    	th:each="i : ${#numbers.sequence(1,totalPages)}">
+			    	 page numbers from 1 to the last page
+			    	<a class="page-link" th:href="@{'/brands/page/' + ${i} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">[[${i}]]</a>
+			    	<a th:replace="fragments :: page_link(${i}, ${i})"></a>
+			    </li>
+			   
+			    disable the next page button if the current page view is the last page
+			    <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}" >
+			    next page view
+			   		<a class="page-link" th:href="@{'/brands/page/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Next</a>
+			    	<a th:replace="fragments :: page_link(${currentPage + 1}, 'Next')"></a>
+			    </li>
+			    disable the last page button if the current page view is the last page
+			    <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}">
+			   		last page view
+			   		<a class="page-link" th:href="@{'/brands/page/' + ${totalPages} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Last</a>
+			    	<a th:replace="fragments :: page_link(${totalPages}, 'Last')"></a>
+			    </li>
+			  </ul>
+			</nav>
+		</div>
+		 -->
+		 
+		 <div th:replace="page_pagination :: pagination('/brands','brands')"></div>
+		 
+		<div th:replace="fragments :: footer"></div>
+		
+	</div>
+	<script th:src="@{/js/common_list.js}"></script>
+	<script type="text/javascript">
+		moduleURL="[[@{/brands}]]";
+		
+		$(document).ready(function(){
+			$(".link-delete").on("click", function(event){
+				event.preventDefault();
+				
+				showDeleteConfirmModal($(this),'brand');
+			});
+		
+		});
+	</script> 
+</body>
+</html>

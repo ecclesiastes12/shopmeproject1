@@ -1,0 +1,30 @@
+*.icon-white{color:white}
+*.icon-silver{color:silver}
+*.icon-green{color:green}
+*.icon-dark{color:gray}
+
+/* for different screen sizes */
+
+@media screen and (max-width: 768px) {
+	/* small screen */
+	div.full-details{ display: none; } /* hide this div on small screen */
+	div.less-details{ display: block; }
+	.search-form-margin{margin-top: 0.5em;
+						margin-left:-0.5em;
+	}
+}
+
+@media screen and (min-width: 768px) and (max-width: 1024px){
+	/* medium screen */
+	div.full-details{ display: block; } 
+	div.less-details{ display: none; }
+	
+		/* hides the user id and email on medium screen */
+	.hideable-column {display: none;}
+}
+
+@media screen and (min-width: 1024px){
+	/* large screen */
+	div.less-details{ display: none; }
+	.hideable-column {display: table-cell;}
+}

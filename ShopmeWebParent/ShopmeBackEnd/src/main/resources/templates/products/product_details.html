@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<div th:fragment="content" id="divProductDetails">
+	<!-- for edit details -->
+	<th:block th:each="detail, status : ${product.details}">
+		<div class="form-inline" th:id="'divDetail' + ${status.index}"> <!-- divDetail0 is an id given to the first div section -->
+		
+			<!-- hidden field that generate product details id dynamically -->
+			<input type="hidden" name="detailIDs" th:value="${detail.id}">
+		
+			<label class="m-3">Name:</label>
+			<input type="text" class="form-control w-25" name="detailNames" maxlength="255"
+				th:value="${detail.name}">
+			<label class="m-3">Value:</label>
+			<input type="text" class="form-control w-25" name="detailValues" maxlength="255"
+			th:value="${detail.value}">
+			<a name="linkRemoveDetail" class=" fas fa-times-circle fa-2x icon-dark float-right m-2" 
+			title="Remove this image"></a>
+		</div>
+	</th:block>
+
+	<!-- <div class="form-inline" id="divDetail0"> --> <!-- divDetail0 is an id given to the first div section -->
+	<!-- ${#list.size(product.details) is a thymeleaf expression used to get size of list of items 
+		in the edit mode the first div section becomes the last div section-->
+		<div class="form-inline" id="'divDetail' + ${#list.size(product.details)}">
+		<input type="hidden" name="detailIDs" value="0">
+		<label class="m-3">Name:</label>
+		<input type="text" class="form-control w-25" name="detailNames" maxlength="255">
+		<label class="m-3">Value:</label>
+		<input type="text" class="form-control w-25" name="detailValues" maxlength="255">
+	</div>
+	
+</div>
+</body>
+</html>

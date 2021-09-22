@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- fragment for page header -->
+<!-- <head th:fragment="page_head(title)"> -->
+
+<!-- page_head fragment modified with a second parameter -->
+<head th:fragment="page_head(title,remove)" th:remove="${remove}">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!-- for mobile phones responsiveness -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+
+<title>[[${title}]]</title>
+
+<link th:rel="stylesheet" type="text/css" th:href="@{/fontawesome/all.css}" />
+<link th:rel="stylesheet" type="text/css" th:href="@{/style.css}" />
+<link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+
+<script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/common.js}"></script>
+</head>
+<body>
+	<!-- fragment for page footer -->
+	<div th:fragment="footer" class="text-center m-3">
+		<p>Shopme Control Panel - Copyright &copy; Shopme</p>
+	</div>
+
+	<!-- 
+ NB This form of code refactor is being used on the table header in order
+	to make it succinct(concise). And not that they have similar codes
+
+Code Before
+
+	<th>
+		<a th:if="${sortField != 'id'}" class="text-white"
+			th:href="@{'/users/page/' + ${currentPage} + '?sortField=id&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">
+				User ID 
+		</a> 
+		<a th:if="${sortField == 'id'}" class="text-white"
+			th:href="@{'/users/page/' + ${currentPage} + '?sortField=id&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">
+				User ID 
+		</a> 
+		
+		<span th:if="${sortField == 'id'}"
+			th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></span>
+	</th>
+ -->
+
+	<!-- Code After  this code will replace all the column headers in the users table page-->
+	<!-- NB the purpose of ${removeTag} is to remove or delete that tag where applicable.
+		this is used purposely to remove the column headers User ID and E-mail on medium screen
+		
+		th tag before removeTag
+		
+			<th th:fragment="column_link(fieldName,columnLable)">
+	-->
+
+<!-- 	<th th:fragment="column_link(fieldName,columnLable,removeTag)" th:remove="${removeTag}"> -->
+<!-- 		<a class="text-white" -->
+<!-- 			th:href="@{'/users/page/' + ${currentPage} + '?sortField=' + ${fieldName} + '&sortDir=' + ${sortField != fieldName ? sortDir : reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}"> -->
+<!-- 				[[${columnLable}]]  -->
+<!-- 		</a>  -->
+<!-- 		<span th:if="${sortField == fieldName}" -->
+<!-- 			th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"> -->
+<!-- 		</span> -->
+<!-- 	</th> -->
+
+
+	#######################
+	column_link modified with moduleURL
+	######################
+	
+<!-- <th th:fragment="column_link(moduleURL,fieldName,columnLable,removeTag)" th:remove="${removeTag}">
+		<a class="text-white"
+			th:href="@{${moduleURL} + '/page/' + ${currentPage} + '?sortField=' + ${fieldName} + '&sortDir=' + ${sortField != fieldName ? sortDir : reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">
+				[[${columnLable}]] 
+		</a> 
+		<span th:if="${sortField == fieldName}"
+			th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}">
+		</span>
+	</th> -->
+	
+	
+	#######################
+	column_link modified with moduleURL
+	modified again with categoryId in product.html for dropdown filtering purpose
+	without keyword
+	######################
+	
+	<th th:fragment="column_link(moduleURL,fieldName,columnLable,removeTag)" th:remove="${removeTag}">
+		<a class="text-white"
+			th:href="@{${moduleURL} + '/page/' + ${currentPage} + '?sortField=' + ${fieldName} + '&sortDir=' + ${sortField != fieldName ? sortDir : reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}
+			+ ${categoryId != null ? '&categoryId=' + categoryId : ''}}">
+				[[${columnLable}]] 
+		</a> 
+		<span th:if="${sortField == fieldName}"
+			th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}">
+		</span>
+	</th>
+	
+	#######################
+	PAGINATION PAGE LINK
+	######################
+<!-- 		<nav th:if="${totalPages > 1}"> shows the pagination if the number of pages is more than 1 -->
+<!-- 			  <ul class="pagination justify-content-center"> -->
+<!-- 			  disable the first page button if the number is less than 1 -->
+<!-- 			    <li th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}"> -->
+<!-- 			    first page view 
+<!-- 			    	sorting for first page ?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}  -->
+<!-- 			    --> -->
+<!-- 			    	<a class="page-link" th:href="@{/users/page/1?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">First</a> -->
+<!-- 			    </li> -->
+<!-- 			    disable the previous page button if the number is less than 1  -->
+<!-- 			    <li th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}">  -->
+<!-- 			     previous page view 
+<!-- 			     	sorting for previous page '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} -->
+<!-- 			     --> -->
+<!-- 			    	<a class="page-link" th:href="@{'/users/page/' + ${currentPage - 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Previous</a> -->
+<!-- 			    </li> -->
+			   
+<!-- 			    active page based on the current page view or number -->
+<!-- 			    <li th:class="${currentPage != i ? 'page-item' : 'page-item active'}" th:each="i : ${#numbers.sequence(1,totalPages)}"> -->
+<!-- 			    	 page numbers from 1 to the last page -->
+<!-- 			    	<a class="page-link" th:href="@{'/users/page/' + ${i} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">[[${i}]]</a> -->
+<!-- 			    </li> -->
+			   
+<!-- 			    disable the next page button if the current page view is the last page -->
+<!-- 			    <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}" > -->
+<!-- 			    next page view -->
+<!-- 			   		<a class="page-link" th:href="@{'/users/page/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Next</a> -->
+<!-- 			    </li> -->
+<!-- 			    disable the last page button if the current page view is the last page -->
+<!-- 			    <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}"> -->
+<!-- 			   		last page view -->
+<!-- 			   		<a class="page-link" th:href="@{'/users/page/' + ${totalPages} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Last</a> -->
+<!-- 			    </li> -->
+<!-- 			  </ul> -->
+<!-- 			</nav> -->
+	
+	
+	#########################
+	 PAGINATION PAGE LINK AFTER
+	#########################
+	
+<!-- 	<a th:fragment="page_link(pageNum,label)" -->
+<!-- 		class="page-link" -->
+<!-- 		th:href="@{'/users/page/' + ${pageNum} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">[[${label}]]</a> -->
+
+
+	#########################
+	 PAGINATION PAGE LINK modified
+	#########################
+	
+	<!-- <a th:fragment="page_link(moduleURL,pageNum,label)"
+		class="page-link"
+		th:href="@{${moduleURL} + '/page/' + ${pageNum} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">[[${label}]]</a>
+ -->
+
+	#########################
+	 PAGINATION PAGE LINK modified again with categoryId in product.html for category search without keyword
+	#########################
+	
+	<a th:fragment="page_link(moduleURL,pageNum,label)"
+		class="page-link"
+		th:href="@{${moduleURL} + '/page/' + ${pageNum} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}
+		+ ${categoryId != null ? '&categoryId=' + categoryId : ''}}">[[${label}]]</a>
+	
+	
+	
+
+	#########################
+	 USER STATUS BEFORE
+	#########################
+<!-- 	<div> -->
+<!-- 		<!-- green icon is for enabled status and dark icon is for disabled status --> -->
+<!-- 		<!-- if the current status of the use is true then the link to disable the  -->
+<!-- 		user will set to false --> -->
+<!-- 			<a th:if="${user.enabled == true}" class="fas fa-check-circle fa-2x icon-green"  -->
+<!-- 			th:href="@{'/users/' + ${user .id} + '/enabled/false'}" -->
+<!-- 			title="Disabled this user"></a> -->
+			
+<!-- 			<!-- if the current status of the use is false then the link to disable the  -->
+<!-- 		user will set to true --> -->
+<!-- 			<a th:if="${user.enabled == false}" class="fas fa-circle fa-2x icon-dark"  -->
+<!-- 			th:href="@{'/users/' + ${user.id} + '/enabled/true'}" -->
+<!-- 			title="Enabled this user"></a> -->
+<!-- 	</div> -->
+
+	#########################
+	 USER STATUS AFTER
+	#########################
+	
+	<div th:fragment="status(enabled, entityName, entityURL)" th:remove="tag">
+		<a th:if="${enabled == true}" class="fas fa-check-circle fa-2x icon-green" 
+		
+		th:href="@{${entityURL} + '/enabled/false'}"
+		th:title="'Disabled this ' + ${entityName} "></a>
+		
+		
+		<a th:if="${enabled == false}" class="fas fa-circle fa-2x icon-dark" 
+		th:href="@{${entityURL} + '/enabled/true'}"
+		th:title="'Enabled this ' + ${entityName}"></a>
+	
+	</div>
+	
+	#########################
+	 EDIT AND DELETE BUTTON ACTION MODIFIED
+	#########################
+	
+	<div th:fragment="edit(entityName, editURL)" th:remove="tag">
+		<a class="fas fa-edit fa-2x icon-green" th:href="@{${editURL}}"
+		th:title="'Edit this ' + ${entityName}"></a>
+	</div>
+		
+	<!-- <div th:fragment="delete(entityName, entityID, deleteURL)" th:remove="tag">
+		<a class="fas fa-trash fa-2x icon-dark link-delete" 
+		th:href="@{${deleteURL}}"
+		th:userId="${entityID}"
+		th:title="'Delete this ' + ${entityName}"></a>
+	</div> -->
+	
+	<div th:fragment="delete(entityName, entityID, deleteURL,visible)" th:remove="tag">
+		<th:block th:if="${visible}">
+		<a class="fas fa-trash fa-2x icon-dark link-delete" 
+		th:href="@{${deleteURL}}"
+		th:entityId="${entityID}"
+		th:title="'Delete this ' + ${entityName}"></a>
+		</th:block>
+	</div>
+	
+	#########################
+	 CATEGORY STATUS 
+	 status is used instead of category_status
+	#########################
+
+	<div th:fragment="category_status" th:remove="tag">
+		<a th:if="${cat.enabled == true}"
+			th:href="@{'/categories/' + ${cat.id} + '/enabled/false'}"
+			class="fas fa-check-circle fa-2x icon-green"></a> <a
+			th:if="${cat.enabled == false}"
+			th:href="@{'/categories/' + ${cat.id} + '/enabled/true'}"
+			class="fas fa-circle fa-2x icon-dark"></a>
+	</div>
+
+	
+	#########################
+	 category actions
+	#########################
+	<div th:fragment = "category_actions" th:remove="tag">
+		<a class="fas fa-edit fa-2x icon-green"
+			th:href="@{'/categories/edit/' + ${cat.id}}"
+			title="Edit this category"></a> 
+			&nbsp; 
+			
+			<!-- BEFORE -->
+			
+<!-- 			<a th:if="${cat.hasChildren != true}"  -->
+<!-- 		      	th:href="@{'/categories/delete/' + ${cat.id}}"  -->
+<!-- 		      	class="fas fa-trash fa-2x icon-dark link-delete"  -->
+<!-- 		      	th:categoryId="${cat.id}" -->
+<!-- 		      	title="Delete this Category"></a> -->
+		      	
+		      	
+		      	<!-- AFTER -->
+		<!-- th:if="${cat.hasChildren == false}" will display the delete button on only children categories(sub-categories) -->
+			<th:block th:if="${cat.hasChildren == false}">
+			<a class="fas fa-trash fa-2x icon-dark link-delete "
+				th:href="@{'/categories/delete/' + ${cat.id}}"
+				th:entityId ="${cat.id}" 
+				title="Delete this category"></a>
+			</th:block>
+	</div>
+	
+	
+	
+	#########################
+	 for filter or search keyword
+	#########################
+	<div th:fragment = "search_form_and_message(moduleURL)">
+		<!-- <form th:action="@{/users/page/1}" class="form-inline m-3"> -->
+		<form th:action="@{${moduleURL}}" class="form-inline m-3">
+			<!-- for search url. when the search button is click the sortField and sortDir value will 
+			be sent to the url -->
+			<input type="hidden" name="sortField" th:value="${sortField}"/>
+			<input type="hidden" name="sortDir" th:value="${sortDir}"/>
+				Filter: &nbsp;
+				<!-- the purpose of th:value="${keyword}" here is to keep the search word the the text field after
+				the search button is click -->
+				<input type="search" name="keyword" th:value="${keyword}" class="form-control" required />
+				
+				<div class="search-form-margin">
+				&nbsp;
+				
+					<button type="submit"  class="btn btn-primary">
+					<i class="fas fa-search  "></i>
+					</button>
+					&nbsp;
+					<button type="button" class="btn btn-secondary" onclick="clearFilter()">
+					<i class="fas fa-eraser  "></i>
+					</button>
+				</div>
+			</form>
+			
+			<div th:if="${message != null}" class="alert alert-success text-center">
+				[[${message}]]
+			</div>
+	
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- The header has been moved to fragments.html 
+
+NB ${pageTitle} is used here because it is stated in the 
+user controller that the pageTitle should be pass the title in the 
+page head tag
+-->
+
+<head>
+	<head th:replace="fragments :: page_head(${pageTitle}, 'tag')"></head>
+	<link rel="stylesheet" type="text/css" th:href="@{/richtext/richtext.min.css}">
+	<script type="text/javascript" th:src="@{/richtext/jquery.richtext.min.js}"></script>
+</head>
+<body>
+<div class="container-fluid">
+	<div th:replace="navigation :: menu">
+	</div>
+	<div>
+		<!-- <h2>Manage Users | Create New User</h2> -->
+		<h2>Manage Products | [[${pageTitle}]]</h2>
+	</div>
+	<form th:action="@{/products/save}" method="post" 
+		th:object="${product}" onsubmit="return checkUnique(this);" 
+		enctype="multipart/form-data">
+		
+		<input type="hidden" th:field="*{id}" />
+		<!-- To store the generated category id when the form is in the edit mode -->
+		<input th:if="${product.category != null}" type="hidden" 
+			id="categoryId" th:value="${product.category.id}">
+		<div>
+			<!-- Nav tabs -->
+			<ul class="nav nav-tabs" id="myTab" role="tablist">
+			  <li class="nav-item" role="presentation">
+			    <a class="nav-link active"   data-toggle="tab" href="#overview" role="tab">Overview</a>
+			    
+			  </li>
+			  <li class="nav-item" role="presentation">
+			    <a class="nav-link"  data-toggle="tab" href="#description" role="tab">Description</a>
+			  </li>
+			  <li class="nav-item" role="presentation">
+			    <a class="nav-link"  data-toggle="tab" href="#images" role="tab">Images</a>
+			  </li>
+			  <li class="nav-item" role="presentation">
+			    <a class="nav-link"  data-toggle="tab" href="#details" role="tab" >Details</a>
+			  </li>
+			  <li class="nav-item" role="presentation">
+			    <a class="nav-link"  data-toggle="tab" href="#shipping" role="tab" >Shipping</a>
+			  </li>
+			</ul>
+			
+			<!-- Tab panes -->
+			<div class="tab-content">
+			  <div class="tab-pane active p-3" id="overview" role="tabpanel">
+			  	<div th:replace="products/product_overview :: content"></div>
+			  </div>
+			  <div class="tab-pane" id="description" role="tabpanel">
+			  	<div th:replace="products/product_description :: content"></div>
+			  </div>
+			  <div class="tab-pane" id="images" role="tabpanel">
+			  	<div th:replace="products/product_images :: content"></div>
+			  </div>
+			  <div class="tab-pane" id="details" role="tabpanel">
+			  	<div th:replace="products/product_details :: content"></div>
+			  	<!-- add another text field to the form when click.
+			  		this can be done in the fragment but they best place 
+			  		to place this is inside the tab pane in product_form.html -->
+			  		<div>
+			  			<input type="button" class="btn btn-secondary" value="Add More Detail"
+			  			onclick="addNextDetailSection()">
+			  		</div>
+			  </div>
+			  <div class="tab-pane" id="shipping" role="tabpanel">
+			  	<div th:replace="products/product_shipping :: content"></div>
+			  </div>
+			</div>
+		</div>
+		
+		<div class="text-center">
+		<input type="submit" value="Save" class="btn btn-primary m-3">
+		<input type="button" value="Cancel" class="btn btn-secondary" id="buttonCancel">
+	</div>
+	</form>
+	
+	<div th:replace="modal_fragments :: modal_dialog"></div>
+	
+	<div th:replace="fragments :: footer"></div>
+ </div>
+ <script type="text/javascript">
+ MAX_FILE_SIZE = 502400; //500KB
+ 
+ //direct the page back to the users page when the cancel button is click
+ // code for cancel button has been move to common_form.js file
+ 
+ moduleURL = "[[@{/products}]]";
+ brandModuleURL = "[[@{/brands}]]";
+ 
+ //for default extra image in the addExtraImageSection()
+ defaultImageThumbnailSrc = "[[@{/images/image-thumbnail.png}]]";
+ 
+ checkUniqueUrl = "[[@{/products/check_unique}]]";
+ 
+ </script>
+ 
+ <script th:src="@{/js/common_form.js}"></script>
+ <script type="text/javascript" th:src="@{/js/product_form_overview.js}"></script>
+ <script type="text/javascript" th:src="@{/js/product_form_images.js}"></script>
+  <script type="text/javascript" th:src="@{/js/product_form_details.js}"></script>
+</body>
+</html>

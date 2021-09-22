@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head th:replace="fragments :: page_head('Products - Shopme Admin', 'none')"></head>
+<body>
+	<div class="container-fluid">
+	<div th:replace="navigation :: menu">
+	</div>
+		<div>
+			<h2>Manage Products</h2>
+			<th:block sec:authorize="hasAnyAuthority('Admin','Editor')">
+			<a th:href="@{/products/new}" class="fas fa-folder-plus fa-2x icon-dark mr-2" ></a>
+			
+			<a th:href="@{/products/export/csv}" class="fas fa-file-csv fa-2x icon-dark mr-2"></a>
+			</th:block>
+		</div>
+		
+		<div>
+		<form th:action="@{/products/page/1}" class="form-inline m-3" id="searchForm">
+			<!-- for search url. when the search button is click the sortField and sortDir value will 
+			be sent to the url -->
+			<input type="hidden" name="sortField" th:value="${sortField}"/>
+			<input type="hidden" name="sortDir" th:value="${sortDir}"/>
+				
+				Category: &nbsp;
+				<select class="form-control" name="categoryId" id="dropdownCategory">
+					<option value="0">All Categories</option>
+					
+					<th:block th:each="cat : ${listCategories}">
+						<option th:value="${cat.id}" th:selected="(${categoryId} == ${cat.id})">[[${cat.name}]]</option>
+					</th:block>
+				</select>
+				&nbsp;
+				
+				Filter: &nbsp;
+				<!-- the purpose of th:value="${keyword}" here is to keep the search word the the text field after
+				the search button is click -->
+				<input type="search" name="keyword" th:value="${keyword}" class="form-control" required />
+				
+				<div class="search-form-margin">
+				&nbsp;
+				
+					<button type="submit"  class="btn btn-primary">
+					<i class="fas fa-search  "></i>
+					</button>
+					&nbsp;
+					<button type="button" class="btn btn-secondary" onclick="clearFilter()">
+					<i class="fas fa-eraser  "></i>
+					</button>
+				</div>
+			</form>
+		</div>
+		
+		<div class="full-details">
+			<table class="table table-bordered table-striped table-hover table-responsive-xl-sm">
+				<thead class="thead-dark">
+					<tr>
+						<!-- <th>Brand ID</th> -->
+						<th th:replace="fragments :: column_link('/products', 'id', 'ID', 'none')" />
+						<th>Main Image</th>
+						<!-- <th>Product Name</th> -->
+						<th th:replace="fragments :: column_link('/products', 'name', 'Product Name', 'none')" />
+						<!-- <th>Brand</th> -->
+						<th th:replace="fragments :: column_link('/products', 'brand', 'Brand', 'none')" />
+						<!-- <th>Category</th> -->
+						<th th:replace="fragments :: column_link('/products', 'category', 'Category', 'none')" />
+						
+						<th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">
+						<th>Enabled</th>
+						</th:block>
+						
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="product : ${listProducts}">
+						<td >[[${product.id}]]</td>
+						<td>
+							<img th:src="@{${product.mainImagePath}}" id="thumbnail" style="width: 120px;" class="img-fluid">
+						</td>
+						<td>
+							<a class="link-detail"
+								th:href="@{'/products/detail/' + ${product.id}}" th:title="${product.name}">[[${product.shortName}]]</a>
+						</td>
+						<td>[[${product.brand.name}]]</td>
+						<td>[[${product.category.name}]]</td>
+						<th:block sec:authorize="hasAnyAuthority('Admin','Editor')">
+							<td>
+								<div th:replace="fragments :: status(${product.enabled}, 'product', '/products/' + ${product.id})"></div>
+							</td>
+						</th:block>
+						<td>
+							<a class="fas fa-file-alt fa-2x icon-green link-detail"
+								th:href="@{'/products/detail/' + ${product.id}}"
+								title="View details of this product"></a>	
+							&nbsp;
+							<th:block sec:authorize="hasAnyAuthority('Admin','Editor','Salesperson')">
+								<div th:replace="fragments :: edit('product', '/products/edit/' + ${product.id})"></div>
+							</th:block>
+							&nbsp;
+							<th:block sec:authorize="hasAnyAuthority('Admin','Editor')">
+								<div th:replace="fragments :: delete('product', ${product.id}, '/products/delete/' + ${product.id},true)"></div>
+							<th:block sec:authorize="hasAnyAuthority('Admin','Editor')">
+						</td>
+					</tr>
+					
+				</tbody>
+			</table>
+		</div>
+		
+		<div class="less-details">
+			<div th:each="product : ${listProducts}" class="row m-1">
+				<div class="col-6">
+					
+			
+				</div>
+				<div class="col-6">
+				<div  class="font-weight-bold">[[${product.name}]]</div>
+				<div class=" mt-2">
+					
+					<a class="fas fa-file-alt fa-2x icon-green"
+							th:href="@{'/products/detail/' + ${product.id}}"
+							title="View details of this product"></a>	
+					
+					<div th:replace="fragments :: edit('product', '/products/edit/' + ${product.id})" ></div>
+					&nbsp;
+					<div th:replace="fragments :: delete('product', ${product.id}, '/products/delete/' + ${product.id},true)"></div>
+				</div>
+				
+			</div>
+			<div>&nbsp;</div>
+		</div>
+		</div>
+		
+		
+		
+		
+<!-- 		</div>
+			
+			<div th:replace="page_pagination :: pagination('/users','users')"></div> -->
+		
+<!-- 		<div class="modal fade text-center" id="confirmModal"> -->
+<!-- 		<div class="modal-dialog"> -->
+<!-- 			<div class="modal-content"> -->
+<!-- 				<div class="modal-header"> -->
+<!-- 					<h4 class="modal-title" >Delete Confirmation</h4> -->
+<!-- 					<button type="button" class="close" data-dismiss="modal">&times;</button> -->
+<!-- 				</div> -->
+<!-- 				<div class="modal-body"> -->
+<!-- 					<span id="confirmText"></span> -->
+<!-- 				</div> -->
+<!-- 				<div class="modal-footer"> -->
+<!-- 					<a class="btn btn-success" href="" id="yesButton">Yes</a> -->
+<!-- 					<button type="button" class="btn btn-danger" data-dismiss="modal">No</button> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+<!-- 		</div> -->
+<!-- 	</div> -->
+		
+		
+		<div th:replace="modal_fragments :: confirm_modal"></div>
+		
+		<!-- modal dialog for showing product details -->
+		<div class="modal fade" id="detailModal">
+			<!-- modal-xl indicate extra-large modal dialog -->
+			<div class="modal-dialog modal-xl" >
+				<div class="modal-content">
+				
+				</div>
+			</div>
+		</div>
+		
+	<!-- 	
+		display page number if the total number of pages(totalItems) is greater than zero
+		<div class="text-center m-1" th:if="${totalItems > 0}">
+			<span>Showing users # [[${startCount}]] to [[${endCount}]] of [[${totalItems}]] </span>
+		</div>
+		<div class="text-center m-1" th:unless="${totalItems > 0}">
+			<span>No users found</span>
+		</div>
+		 -->
+		 
+		<!-- <div>
+			<nav th:if="${totalPages > 1}"> shows the pagination if the number of pages is more than 1
+			  <ul class="pagination justify-content-center flex-wrap">
+			  disable the first page button if the number is less than or equal to 1
+			    <li th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}">
+			    first page view 
+ 			    	sorting for first page ?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} 
+			    
+			    	<a class="page-link" th:href="@{'/brands/page/1?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">First</a>
+			   		<a th:replace="fragments :: page_link(1,'First')"></a>
+			    </li>
+			    disable the previous page button if the number is less than or equal to 1 
+			    <li th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}"> 
+			     previous page view 
+			     	sorting for previous page '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}
+			     
+			    	<a class="page-link" th:href="@{'/brands/page/' + ${currentPage - 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Previous</a>
+			    
+			    	<a th:replace="fragments :: page_link(${currentPage - 1},'Previous')"></a>
+			    </li>
+			   
+			    active page based on the current page view or number
+			    <li th:class="${currentPage != i ? 'page-item' : 'page-item active'}" 
+			    	th:each="i : ${#numbers.sequence(1,totalPages)}">
+			    	 page numbers from 1 to the last page
+			    	<a class="page-link" th:href="@{'/brands/page/' + ${i} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">[[${i}]]</a>
+			    	<a th:replace="fragments :: page_link(${i}, ${i})"></a>
+			    </li>
+			   
+			    disable the next page button if the current page view is the last page
+			    <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}" >
+			    next page view
+			   		<a class="page-link" th:href="@{'/brands/page/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Next</a>
+			    	<a th:replace="fragments :: page_link(${currentPage + 1}, 'Next')"></a>
+			    </li>
+			    disable the last page button if the current page view is the last page
+			    <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}">
+			   		last page view
+			   		<a class="page-link" th:href="@{'/brands/page/' + ${totalPages} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Last</a>
+			    	<a th:replace="fragments :: page_link(${totalPages}, 'Last')"></a>
+			    </li>
+			  </ul>
+			</nav>
+		</div>
+		 -->
+		 
+		<div th:replace="page_pagination :: pagination('/products','products')"></div>
+		 
+		<div th:replace="fragments :: footer"></div>
+		
+	</div>
+	<script th:src="@{/js/common_list.js}"></script>
+	<script type="text/javascript">
+		moduleURL="[[@{/products}]]";
+		
+		$(document).ready(function(){
+			$(".link-delete").on("click", function(event){
+				event.preventDefault();
+				
+				showDeleteConfirmModal($(this),'product');
+			});
+			
+			$(".link-detail").on("click", function(e){
+				event.preventDefault();
+				linkDetailURL = $(this).attr("href");
+				
+				$("#detailModal") //selects the modal dialog
+					.modal("show") //show the modal
+						.find(".modal-content") //finds the element modal-content
+							.load(linkDetailURL); //load the url for the select product
+			});
+			
+			
+			//change event handler for dropdown category
+			$("#dropdownCategory").on("change", function(){
+				$("#searchForm").submit();
+			});
+		
+		});
+	</script> 
+</body>
+</html>

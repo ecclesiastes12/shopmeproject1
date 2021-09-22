@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- The header has been moved to fragments.html 
+
+NB ${pageTitle} is used here because it is stated in the 
+user controller that the pageTitle should be pass the title in the 
+page head tag
+-->
+
+<head th:replace="fragments :: page_head(${pageTitle})"></head>
+<body>
+<div class="container-fluid">
+	<div th:replace="navigation :: menu">
+	</div>
+	<div>
+		<!-- <h2>Manage Users | Create New User</h2> -->
+		<h2>Manage Users | [[${pageTitle}]]</h2>
+	</div>
+	<form th:action="@{/categories/save}" method="post" style="max-width: 500px; margin: 0 auto;"
+		enctype="multipart/form-data"
+		onsubmit="return checkUnique(this);"
+		th:object="${category}" >
+		
+		<!-- Hidden category id field -->
+		<input type="hidden" th:field="*{id}" />
+		
+		<div class="border border-secondary rounded p-3">
+			<div class="form-group row">
+				<label class="col-sm-4 col-form-label">Name:</label>
+				<div class="col-sm-8">
+					<input type="text" class="form-control" th:field="*{name}" required="required" minlength="3" maxlength="128">
+				</div>
+			</div>
+			<div class="form-group row">
+				<label class="col-sm-4 col-form-label">Alias:</label>
+				<div class="col-sm-8">
+					<input type="text" class="form-control" th:field="*{alias}" required="required" minlength="3" maxlength="64">
+				</div>
+			</div>
+			<div class="form-group row">
+				<label class="col-sm-4 col-form-label">Parent Category:</label>
+				<div class="col-sm-8">
+					<select class="form-control" th:field="*{parent}">
+						<option value="0">[No Parent]</option>
+						<th:block th:each="cat : ${listCategories}">
+							<option th:value="${cat.id}">[[${cat.name}]]</option>
+						</th:block>
+					</select>
+				</div>
+			</div>
+
+				<div class="form-group row">
+					<label class="col-sm-4 col-form-label">Image:</label>
+					<div class="col-sm-8">
+
+						<!-- hidden field that store photos -->
+						<input type="hidden" th:field="*{image}">
+						<!-- accept indicate it should accept only jpeg and png file -->
+						<input type="file" id="fileImage" name="fileImage"
+							accept="image/png,image/jpeg" th:required="${category.imagePath == null}" 
+							class="mb-2" />
+							
+
+						<div class="m-2">
+							<!--  display the thumbnail of the images -->
+							<!-- <img alt="Photos preview" th:src="@{/images/default-user.png}" id="thumbnail"
+					class="img-fluid" style="width:100px" /> -->
+
+							<!-- th:src="@{${category.imagePath}}" will display the image on the form when you click on edit button -->
+							<img id="thumbnail" alt="Image preview" th:src="@{${category.imagePath}}"
+								class="img-fluid" style="width: 100px" />
+						</div>
+					</div>
+
+				</div>
+
+				<div class="form-group row">
+					<label class="col-sm-4 col-form-label">Enabled:</label>
+					<div class="col-sm-8">
+						<input type="checkbox" th:field="*{enabled}">
+					</div>
+				</div>
+
+
+
+
+				<div class="text-center">
+				<input type="submit" value="Save" class="btn btn-primary m-3">
+				<input type="button" value="Cancel" class="btn btn-secondary" id="buttonCancel">
+			</div>
+		</div>
+	</form>
+	
+	
+	
+	<div th:replace="fragments :: footer"></div>
+ </div>
+ <script type="text/javascript">
+ 
+ //direct the page back to the users page when the cancel button is click
+ // code for cancel button has been move to common_form.js file
+ 
+ moduleURL = "[[@{/categories}]]";
+ 	
+ 	/* function to check category  item uniqueness on before form submission*/
+ 	function checkUnique(form){
+ 	
+ 	/* field to check for category uniqueness*/
+ 	
+ 	catId = $("#id").val();
+ 	catName = $("#name").val();
+ 	catAlias = $("#alias").val();
+ 	
+ 	/*NB for csrfValue check code inspection in browser developer options*/
+ 	csrfValue = $("input[name='_csrf']").val();
+ 	
+ 	/*url is from CategoryRestController*/
+ 	url = "[[@{/categories/check_unique}]]";
+ 	
+ 	/*NB name of the parameter(param) must match with the 
+ 	paramters in CategoryRestController*/
+ 	
+ 	params = {id: catId, name: catName, alias: catAlias, _csrf: csrfValue};
+ 	
+ 	
+ 	/*sends post request to the server with the given url and params*/
+ 	
+ 	$.post(url, params, function(response){
+ 		//alert(response);
+ 		//checks response from the server
+ 		if(response == "OK"){
+ 			form.submit();
+ 		}else if(response == "DuplicateName"){
+ 			showWarningModal("There is another category having the same name " + catName);
+ 		}else if(response == "DuplicateAlias"){
+ 			showWarningModal("There is another category having the same alias " + catAlias);
+ 		}else{
+ 			showErrorModal("Unknown response from server");
+ 		}
+ 	}).fail(function(){
+ 		//alert('failed');
+ 		showErrorModal("Could not connect to the server");
+ 	});
+ 	
+ 	return false;
+ 	}
+ 
+ 	// function for showing error and warning messages of the modal dialog is moved to common_form.js
+ </script>
+ <script th:src="@{/js/common_form.js}"></script>
+</body>
+</html>
